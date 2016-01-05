@@ -19,9 +19,9 @@ favicon: img/favicon.png
 douban_username:  
 twitter_username: 
 github_username: clangpp
-weibo_username: clangpp@gmail.com
+weibo_username: clangpp
 facebook_username:
-zhihu_username: clangpp@gmail.com
+zhihu_username: clangpp
 
 # Build settings  
 # use Github Flavored Markdown !important  
