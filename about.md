@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "About"
-description: "I'm clangpp, heah!"
+description: "I'm clangpp!"
 header-img: "img/green.jpg"
 ---
 
