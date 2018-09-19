@@ -34,3 +34,21 @@ void AlreadyHasCharStar(const char* s) {
   TakesString(s); // 编译器会复制一份s
 }
 ```
+
+## 怎么解决？
+
+Google推荐使用`string_view`来接受字符串参数。这个类型比C++17要早——在C++17环境中你应该使用`std::string_view`，在非C++17环境中你应该使用`absl::string_view`。
+
+一个`string_view`类型的变量可以被想象成一个“镜像”，映射了一段已经存在的字符列表。更明确地说，一个`string_view`仅仅包含一个指针和一个长度，用以定位一个字符数据区间。`string_view`既不拥有这些数据，又不能修改这段存储。因此，复制`string_view`是浅拷贝，字符串数据不会被复制。
+
+`string_view`可以从`const char*`和`const string&`隐式构造而成。又因为`string_view`不会复制字符串，构造`string_view`不会有`O(n)`的内存代价。以`const string&`构造`string_view`时，构造函数时间复杂度为`O(1)`。以`const char*`构造`string_view`时，构造函数会自动调用`strlen()`（或者你可以用双参形式的`string_view`构造函数）。
+
+```c++
+void AlreadyHasString(const string& s) {
+  TakesStringView(s); // 没有显式类型转换；方便！
+}
+
+void AlreadyHasCharStar(const char* s) {
+  TakesStringView(s); // 没有复制；高效！
+}
+```
