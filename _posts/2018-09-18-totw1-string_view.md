@@ -58,4 +58,24 @@ void AlreadyHasCharStar(const char* s) {
 
 如果你的API只需要在单次函数调用中使用字符串数据，且不需要修改该字符串数据，（让函数（译者注））接收一个`string_view`就足够了。如果你需要修改数据或在以后访问数据，那么你需要用`string(my_string_view)`将`string_view`显式转换为C++字符串。
 
-向现有代码库中添加`string_view`并不总是正确的事：如果在函数内需要将字符串以`string`或以`NULL`结尾的`const char*`传给下一级函数，那么将本级函数参数改为`string_view`可能会是低效的。对于`string_view`，推荐先在工具代码中采用，进而逐步向其调用端推广；或者在全新项目中统一使用`string_view`。
+向现有代码库中添加`string_view`并不总是正确的事：如果在函数内需要将字符串以`string`或以[`NULL`](https://baike.baidu.com/item/NULL/19660386)结尾的`const char*`传给下一级函数，那么将本级函数参数改为`string_view`可能会是低效的。对于`string_view`，推荐先在工具代码中采用，进而逐步向其调用端推广；或者在全新项目中统一使用`string_view`。
+
+## 附加说明
+
++ 与其他字符串类型不同，`string_view`应该像`int`或`double`那样按值传递（相对于按引用、指针传递，译者注），因为`string_view`对象本身只占用很小的内存。
+
++ `string_view`指向的字符串未必以`NULL`字符结尾。因此，如下的写法是不安全的：
+  ```c++
+  printf("%s\n", sv.data()); // 别这样写（否则容易“烫烫烫”，译者注）
+  ```
+  然而，如下写法是可以的：
+  ```c++
+  printf("%.*s\n", static_cast<int>(sv.size()), sv.data());
+  ```
+
++ 你可以像打印`string`或`const char*`一样直接打印`string_view`：
+  ```c++
+  std::cout << "Took '" << s << "'";
+  ```
+
++ 在大部分情况下，你可以安全地将现有函数的`const string&`或`NULL`结尾的`const char*`类型的形参直接转换为`string_view`。我们见过的唯一例外是，如果将函数地址赋值给某函数指针，那么会遇到“函数指针类型不匹配”的编译错误。
