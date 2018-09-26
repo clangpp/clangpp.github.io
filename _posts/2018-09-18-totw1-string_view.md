@@ -1,5 +1,6 @@
 # C++贴士 #1: string_view
 
++ 原文链接: https://abseil.io/tips/1
 + 最初发布于2012-04-20
 + 作者: Michael Chastain (mec.desktop@gmail.com)
 + 更新于2017-09-18
