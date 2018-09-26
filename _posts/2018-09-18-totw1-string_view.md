@@ -66,7 +66,7 @@ void AlreadyHasCharStar(const char* s) {
 
 + `string_view`指向的字符串未必以`NULL`字符结尾。因此，如下的写法是不安全的：
   ```c++
-  printf("%s\n", sv.data()); // 别这样写（否则容易“烫烫烫”，译者注）
+  printf("%s\n", sv.data()); // 别这样写
   ```
   然而，如下写法是可以的：
   ```c++
