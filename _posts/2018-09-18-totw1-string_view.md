@@ -39,7 +39,7 @@ void AlreadyHasCharStar(const char* s) {
 
 Google推荐使用`string_view`来接受字符串参数。这个类型比C++17要早——在C++17环境中你应该使用`std::string_view`，在非C++17环境中你应该使用`absl::string_view`。
 
-一个`string_view`类型的变量可以被想象成一个“镜像”，映射了一段已经存在的字符列表。更明确地说，一个`string_view`仅仅包含一个指针和一个长度，用以定位一个字符数据区间。`string_view`既不拥有这些数据，又不能修改这段存储。因此，复制`string_view`是浅拷贝，字符串数据不会被复制。
+一个`string_view`类型的变量可以被想象成一个“镜像”，映射了一段已经存在的字符列表。更明确地说，一个`string_view`仅仅包含一个指针和一个长度，用以定位一个字符数据区间。`string_view`既不拥有这些数据，又不能修改这段存储。因此，复制`string_view`是浅拷贝，字符串内容不会被复制。
 
 `string_view`可以从`const char*`和`const string&`隐式构造而成。又因为`string_view`不会复制字符串，构造`string_view`不会有`O(n)`的内存代价。以`const string&`构造`string_view`时，构造函数时间复杂度为`O(1)`。以`const char*`构造`string_view`时，构造函数会自动调用`strlen()`（或者你可以用双参形式的`string_view`构造函数）。
 
@@ -52,3 +52,9 @@ void AlreadyHasCharStar(const char* s) {
   TakesStringView(s); // 没有复制；高效！
 }
 ```
+
+因为`string_view`不拥有其指向的数据，所以`string_view`（就像`const char*`）指向的字符串需要有超出该`string_view`的生存期。这意味着存储`string_view`总是需要问个问题：你得证明`string_view`指向的数据的生存期超出`string_view`的生存期
+
+如果你的API只需要在单次函数调用中使用字符串数据，且不需要修改该字符串数据，（让函数（译者注））接收一个`string_view`就足够了。如果你需要修改数据或在以后访问数据，那么你需要用`string(my_string_view)`将`string_view`显式转换为C++字符串。
+
+向现有代码库中添加`string_view`并不总是正确的事：如果在函数内需要将字符串以`string`或以`NULL`结尾的`const char*`传给下一级函数，那么将本级函数参数改为`string_view`可能会是低效的。对于`string_view`，推荐先在工具代码中采用，进而逐步向其调用端推广；或者在全新项目中统一使用`string_view`。
